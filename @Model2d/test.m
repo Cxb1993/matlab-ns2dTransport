@@ -22,7 +22,8 @@ m.Y = reshape(Y,1,[])';
 m.Z = 0*m.X;
 
 %m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
-m.IEN = delaunay(m.X,m.Y);
+m.del = delaunayTriangulation(m.X,m.Y);
+m.IEN = m.del.ConnectivityList
 
 nvert=size(m.X,1);
 nelem=size(m.IEN,1);
@@ -253,7 +254,7 @@ if(strcmp(problem,'poiseuilleAxi'))
             pc(i)=0;
             outflow(i)=0;
         end;
-        if(Y(i)==a1)
+        if((X(i)==1) &&(Y(i)>1)&&(Y(i)<a1))
             idbcc=[idbcc i];
             cc(i)=1;
         end;

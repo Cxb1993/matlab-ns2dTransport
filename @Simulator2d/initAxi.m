@@ -93,6 +93,7 @@ s.nvert=nvert;
 s.M=[ M Mz;Mz M ];
 s.Mc=Mc;
 s.K=[ K11 Mz; Mz K22 ];
+s.Kc=Kc;
 s.G=[ G1;G2 ];
 s.D=[ D1 D2 ];
 

@@ -16,6 +16,7 @@ function [up,vp,cp] = convectlin(s,dt)
 
 [uc vc pc cc]=getBC(s.m);
 IEN = getIEN(s.m);
+del = getDelaunay(s.m);
 X=getX(s.m);
 Y=getY(s.m);
 Z=getZ(s.m);
@@ -39,18 +40,11 @@ found=zeros(nvert,1);
 found(s.m.idbcu)=1;
 vetvert=find(found==0);
 
-% New version of Matlab after 2010
-%Xc=transpose(X(1:nvert));
-%Yc=transpose(Y(1:nvert));
-%d = delaunayTriangulation ( [X,Y] );
-%d = DelaunayTriangulation ( [Xc,Yc] );
- 
-%xpc=transpose(xp(vetvert));
-%ypc=transpose(yp(vetvert));
-%vetmele = PointLocation ( d, [xpc,ypc]); 
-
 % Old version of Matlab before 2010
-vetmele=tsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(vetvert),yp(vetvert));
+%vetmele=tsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(vetvert),yp(vetvert));
+
+% New version of Matlab after 2010
+vetmele=del.pointLocation(xp,yp);
 
 subvetvert1=find(vetmele>0);
 

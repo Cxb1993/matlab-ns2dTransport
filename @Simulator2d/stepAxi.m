@@ -40,15 +40,20 @@ kc=1/(Re*Sc);
 
 %%% calculo do termo convectivo para o met semi-lagrangeano
 [up,vp,cp] = convectLin(s,dt);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-% semi-lagrangeano  --  montagem dos vetores e matriz           %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-
-
-va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
 Mclump=diag(sparse(sum(s.Mc,2)));
-vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*[cp];
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% semi-lagrangiano  --  montagem dos vetores e matriz           %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
+vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*cp;
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% lagrangiano  --  montagem dos vetores e matriz           %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps;
+%vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % metodo acoplado                                               %

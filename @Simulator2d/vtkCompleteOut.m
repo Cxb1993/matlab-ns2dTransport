@@ -64,16 +64,22 @@ fprintf(fid, '\n',i);
 
 fprintf(fid, '\n',i);
 fprintf(fid, 'POINT_DATA %d\n',nvert);
-fprintf(fid, 'SCALARS scalars float\n');
+fprintf(fid, 'SCALARS concentration float\n');
 fprintf(fid, 'LOOKUP_TABLE default\n');
 for i=1:nvert
-    fprintf(fid, '%2.10f\n', cs(i));
+    fprintf(fid, '%2.10f\n', full(cs(i)));
+end;
+
+fprintf(fid, 'SCALARS pressure float\n');
+fprintf(fid, 'LOOKUP_TABLE default\n');
+for i=1:nvert
+    fprintf(fid, '%2.10f\n', full(ps(i)));
 end;
 
 fprintf(fid, '\n',i);
 fprintf(fid, 'VECTORS vectors float\n');
 for k=1:nvert
-    fprintf(fid, '%2.10f %2.10f %2.2f\n', us(k), vs(k), 0);
+    fprintf(fid, '%2.10f %2.10f %2.2f\n', full(us(k)), full(vs(k)), 0);
 end;
 
 fclose(fid);
