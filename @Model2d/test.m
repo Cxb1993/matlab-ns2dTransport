@@ -21,7 +21,8 @@ m.X = reshape(X,1,[])';
 m.Y = reshape(Y,1,[])';
 m.Z = 0*m.X;
 
-m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
+%m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
+m.IEN = delaunay(m.X,m.Y);
 
 nvert=size(m.X,1);
 nelem=size(m.IEN,1);
@@ -219,6 +220,43 @@ if(strcmp(problem,'couette'))
             cc(i)=1;
         end;
 
+    end;
+end;
+
+if(strcmp(problem,'poiseuilleAxi'))
+    outflow=ones(size(X));
+    j=0;
+    % no-slip walls
+    for i=1:nnodes
+        if((X(i)==1)||(Y(i)==a1))
+            idbcu=[idbcu i];
+            idbcv=[idbcv i];
+
+            uc(i)=0;
+            vc(i)=0;
+            % poiseuille profile uc(y)
+            if(X(i)==1)
+                uc(i)=1;
+            end;
+        end;
+        % symmetry condition
+        if(Y(i)==1)
+            idbcv=[idbcv i];
+            vc(i)=0;
+        end;
+    end;
+
+    % pressure outflow
+    for i=1:nvert
+        if(X(i)==a)
+            idbcp=[idbcp i];
+            pc(i)=0;
+            outflow(i)=0;
+        end;
+        if(Y(i)==a1)
+            idbcc=[idbcc i];
+            cc(i)=1;
+        end;
     end;
 end;
 

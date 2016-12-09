@@ -1,11 +1,11 @@
-function s = init(s)
+function s = initAxi(s)
 %modelo de documentacao a partir de:
 %http://www.engin.umd.umich.edu/CIS/course.des/cis400/matlab/oop.html
 
 %SIMULATOR simulator class constructor.
 %   s = Simulator(m) creates a simulator object from the mesh object
 
-%Name: init
+%Name: initAxi
 %Location: <path>/@Simulator
 %Purpose: initialize the global matrix from elementary matrix
 
@@ -36,6 +36,8 @@ Mz = sparse(nnodes,nnodes);
 Mc = sparse(nvert,nvert);
 G1 = sparse(nnodes,nvert);
 G2 = sparse(nnodes,nvert);
+D1 = sparse(nvert,nnodes);
+D2 = sparse(nvert,nnodes);
 
 s.uant=sparse(nnodes*2+nvert,1);
 
@@ -43,52 +45,45 @@ s.uant=sparse(nnodes*2+nvert,1);
 element=FEMMiniElement2d();
 elementc=FEMLinElement2d();
 
-%%% parametros obtidos a partir de dados experimentais
-s.muzero=2.255;
-s.eme=0.81315;
-s.cs=cc;
-
 for mele = 1:nele
 
     v1=IEN(mele,1);
     v2=IEN(mele,2);
     v3=IEN(mele,3);
-    c=(s.cs(v1)+s.cs(v2)+s.cs(v3))/3;
-    mu=s.muzero*exp(s.eme*c);
-    Dif=1/mu;
     mele/nele
 
-    [massele,kxx,kyy,kxy,kyx,gxele,gyele,ngleu,nglep,v]=getmgq(element,mele,IEN,X,Y,Z);
+	radius = (Y(v1)+Y(v2)+Y(v3)) / 3.0;
+
+    [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(element,mele,IEN,X,Y,Z);
 
     vp = v(1:3);
     %ngleu: numero de graus de liberdade do elemento associados a velocidade
     %nglep: idem associados a p
 
-    % K= [11 12]
-    % M= [21 22]
+    % K= [11 0]
+    % M= [0 22]
 
-    % bloco 11
+    %K11(v,v) = K11(v,v)+(kxx+kyy);
+    K11(v,v) = K11(v,v)+(kxx+kyy-(1.0/radius)*ky);
+
+    %K22(v,v) = K22(v,v)+(kxx+kyy);
+    K22(v,v) = K22(v,v)+(kxx+kyy-(1.0/radius)*ky+(1.0/(radius*radius))*massele);
     M(v,v) = M(v,v)+massele;
-
-    % considering 2D with variable viscosity
-    % K11(v,v) = K11(v,v)+mu*(2*kxx+kyy); 
-    % K12(v,v) = K12(v,v)+mu*kyx;
-    % K22(v,v) = K22(v,v)+mu*(2*kyy+kxx);
-	% K21 = K12
-
-    % considering 2D with constant viscosity
-    K11(v,v) = K11(v,v)+(kxx+kyy);
-    K22(v,v) = K22(v,v)+(kyy+kxx);
 
     G1(v,vp)=G1(v,vp)+gxele;
     G2(v,vp)=G2(v,vp)+gyele;
 
-    [masselec,kxxc,kyyc,gxelec,gyelec,nglec,v]=getmgq(elementc,mele,IEN,X,Y,Z);
+    D1(vp,v)=D1(vp,v)+dxele;
+    %D2(vp,v)=D2(vp,v)+dyele;
+    D2(vp,v)=D2(vp,v)+dyele+(1.0/radius)*dmass;
+
+    [masselec,kxxc,kyyc,kxc,kyc,gxelec,gyelec,nglec,v]=getmgqAxi(elementc,mele,IEN,X,Y,Z);
 
     %ngleu: numero de graus de liberdade do elemento associados a velocidade
     %nglep: idem associados a p
 
-    Kc(vp,vp) = Kc(vp,vp)+Dif*(kxxc+kyyc);
+    %Kc(vp,vp) = Kc(vp,vp)+(kxxc+kyyc);
+    Kc(vp,vp) = Kc(vp,vp)+(kxxc+kyyc-(1.0/radius)*kyc);
     Mc(vp,vp) = Mc(vp,vp)+masselec;
 
 end;
@@ -97,15 +92,9 @@ s.nnodes=nnodes;
 s.nvert=nvert;
 s.M=[ M Mz;Mz M ];
 s.Mc=Mc;
-
-% considering 2D with variable viscosity
-%s.K=[ K11 K12; K12' K22 ];
-% considering 2D with constant viscosity
 s.K=[ K11 Mz; Mz K22 ];
-
-s.Kc=Kc;
 s.G=[ G1;G2 ];
-s.D=s.G';
+s.D=[ D1 D2 ];
 
 s.us=uc;
 s.vs=vc;
