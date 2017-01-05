@@ -63,18 +63,18 @@ for mele = 1:nele
     % K= [11 0]
     % M= [0 22]
 
-    %K11(v,v) = K11(v,v)+(kxx+kyy);
-    K11(v,v) = K11(v,v)+(kxx+kyy-ky);
+    %K11(v,v) = K11(v,v)+(kxx+kyy-ky);
+    K11(v,v) = K11(v,v)+(kxx+kyy);
 
-    %K22(v,v) = K22(v,v)+(kxx+kyy);
-    K22(v,v) = K22(v,v)+(kxx+kyy-ky+massr);
+    %K22(v,v) = K22(v,v)+(kxx+kyy-ky+massr);
+    K22(v,v) = K22(v,v)+(kxx+kyy+massr);
+
     M(v,v) = M(v,v)+massele;
 
     G1(v,vp)=G1(v,vp)+gxele;
     G2(v,vp)=G2(v,vp)+gyele;
 
     D1(vp,v)=D1(vp,v)+dxele;
-    %D2(vp,v)=D2(vp,v)+dyele;
     D2(vp,v)=D2(vp,v)+dyele+dmass;
 
     [masselec,kxxc,kyyc,kxc,kyc,gxelec,gyelec,nglec,v]=getmgqAxi(elementc,mele,IEN,X,Y,Z);
