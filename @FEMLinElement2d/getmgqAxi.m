@@ -91,14 +91,14 @@ masselec=zeros(nglec,nglec);
 for i=1:nglec
     for j=1:nglec
         for k=1:quadpoints
-            masselec(i,j)=masselec(i,j)+phiJ(k,i)*phiJ(k,j)*gqWeights(k)*jacobian;
-            kxxc(i,j)=kxxc(i,j)+dphiJdx(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
-            kyyc(i,j)=kyyc(i,j)+dphiJdy(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+            masselec(i,j)=masselec(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*phiJ(k,j)*gqWeights(k)*jacobian;
+            kxxc(i,j)=kxxc(i,j)+2*3.141592653589793*localy(k)*dphiJdx(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+            kyyc(i,j)=kyyc(i,j)+2*3.141592653589793*localy(k)*dphiJdy(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
             % 3rd term of laplacian axissymetric in x and y
             % kxc = Ni * dNj/dx
-		    kxc(i,j)=kxc(i,j)+phiJ(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+		    kxc(i,j)=kxc(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
             % kyc = Ni * dNj/dy
-		    kyc(i,j)=kyc(i,j)+phiJ(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+		    kyc(i,j)=kyc(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
         end;
     end;
 end;
@@ -109,8 +109,8 @@ gyelec=zeros(nglec,nglec);
 for i=1:nglec
     for j=1:nglec
         for k=1:quadpoints
-            gxelec(i,j)=gxelec(i,j)-gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
-            gyelec(i,j)=gyelec(i,j)-gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
+            gxelec(i,j)=gxelec(i,j)-2*3.141592653589793*localy(k)*gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
+            gyelec(i,j)=gyelec(i,j)-2*3.141592653589793*localy(k)*gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
         end;
     end;
 end;

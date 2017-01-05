@@ -61,6 +61,7 @@ for ii=1:nbc
     G(:,i)=0*b1;
     D(i,:)=0*b1';
     E(i,i)=-1;
-    b2(i)=-s.m.pc(i);
+    %b2(i)=-s.m.pc(i);
+    b2(i)=-s.m.pc(i)*0; % correcao na pressao
 end;
 

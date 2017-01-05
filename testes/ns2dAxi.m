@@ -28,7 +28,7 @@ s1=stepAxi(s1,dt,true,'uncoupled',Re,Sc);
 %saveDump(s1,workDir,'sim',i)
 %saveSol(s1,workDir,'sim',i)
 
-for i=2:40
+for i=2:100
     i
     s1=stepAxi(s1,dt,false,'uncoupled',Re,Sc);
     %saveSol(s1,workDir,'sim',i)

@@ -1,9 +1,9 @@
-function [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(t,mele,IEN,X,Y,Z)
+function [massele,kxx,kyy,kxy,kyx,kx,ky,massr,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(t,mele,IEN,X,Y,Z)
 
 %TELEMENT element class constructor.
 %   t = TElement(m) creates a element object
 
-%Name: getmgq
+%Name: getmgqAxi
 %Location: <path>/@FEMMiniElement/
 %Purpose: get matrix element with numerical integration - Gauss Quadrature
 
@@ -332,20 +332,22 @@ kyx=zeros(ngleu,ngleu);
 kxy=zeros(ngleu,ngleu);
 kx=zeros(ngleu,ngleu);
 ky=zeros(ngleu,ngleu);
+massr=zeros(ngleu,ngleu);
 massele=zeros(ngleu,ngleu);
 for i=1:ngleu
     for j=1:ngleu
         for k=1:quadpoints
-           massele(i,j)=massele(i,j)+phiJ(k,i)*phiJ(k,j)*jacobian*gqWeights(k);
-           kxx(i,j)=kxx(i,j)+dphiJdx(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
-           kyy(i,j)=kyy(i,j)+dphiJdy(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
-           kyx(i,j)=kyx(i,j)+dphiJdy(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
-           kxy(i,j)=kxy(i,j)+dphiJdx(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+           massele(i,j)=massele(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*phiJ(k,j)*jacobian*gqWeights(k);
+           kxx(i,j)=kxx(i,j)+2*3.141592653589793*localy(k)*dphiJdx(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+           kyy(i,j)=kyy(i,j)+2*3.141592653589793*localy(k)*dphiJdy(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+           kyx(i,j)=kyx(i,j)+2*3.141592653589793*localy(k)*dphiJdy(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+           kxy(i,j)=kxy(i,j)+2*3.141592653589793*localy(k)*dphiJdx(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
            % 3rd term of laplacian axissymetric in x and y
            % kx = Ni * dNj/dx
-		   kx(i,j)=kx(i,j)+phiJ(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+		   kx(i,j)=kx(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
            % ky = Ni * dNj/dy
-		   ky(i,j)=ky(i,j)+phiJ(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+		   ky(i,j)=ky(i,j)+2*3.141592653589793*localy(k)*phiJ(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+		   massr(i,j)=massr(i,j)+2*3.141592653589793*(1.0/localy(k))*phiJ(k,i)*phiJ(k,j)*jacobian*gqWeights(k);
         end;
     end;
 end;
@@ -359,15 +361,15 @@ dmass=zeros(nglep,ngleu);
 for i=1:ngleu
     for j=1:nglep
         for k=1:quadpoints
-            gxele(i,j)=gxele(i,j)+dgqPointsdx(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
-            gyele(i,j)=gyele(i,j)+dgqPointsdy(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
+			gxele(i,j)=gxele(i,j)+2*3.141592653589793*localy(k)*dgqPointsdx(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
+            gyele(i,j)=gyele(i,j)+2*3.141592653589793*localy(k)*dgqPointsdy(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
             % dxele = dNi/dx * Cj
-            dxele(j,i)=dxele(j,i)-gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
+            dxele(j,i)=dxele(j,i)-2*3.141592653589793*localy(k)*gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
             % dyele = dNi/dy * Cj
-            dyele(j,i)=dyele(j,i)-gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
+            dyele(j,i)=dyele(j,i)-2*3.141592653589793*localy(k)*gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
             % 3rd term of axissymetric divergent operator 
             % dmass = Ni * Cj (where Cj is linear weight function)
-			dmass(j,i)=dmass(j,i)-phiJ(k,i)*gqPoints(k,j)*jacobian*gqWeights(k);
+			dmass(j,i)=dmass(j,i)-2*3.141592653589793*localy(k)*phiJ(k,i)*gqPoints(k,j)*jacobian*gqWeights(k);
 
         end;
     end;
