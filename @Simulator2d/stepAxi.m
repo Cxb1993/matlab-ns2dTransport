@@ -42,18 +42,26 @@ kc=1/(Re*Sc);
 [up,vp,cp] = convectLin(s,dt);
 Mclump=diag(sparse(sum(s.Mc,2)));
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% Lagrangiano  --  montagem dos vetores e matriz                %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% no pressure correction
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv];
+% pressure correction - Lagrangian
+va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps; 
+
+vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
+
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % semi-lagrangiano  --  montagem dos vetores e matriz           %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
-vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*cp;
+% no pressure correction
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]; 
+% pressure correction - Semi-Lagrangian
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-% lagrangiano  --  montagem dos vetores e matriz           %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps;
-%vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
+%vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*cp;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % metodo acoplado                                               %
@@ -160,10 +168,12 @@ end;
 s.us=us;
 s.vs=vs;
 
+% no pressure correction
 %s.ps=ps;
-% correcao na pressao
-% SETUNCOUPLEDBC deve ser ajustado para b2 = 0
-s.ps=s.ps+ps;
+
+% pressure correction
+% SETUNCOUPLEDBC must be set to b2 = 0
+s.ps=s.ps+ps; 
 
 s.cs=cs;
 s.time=s.time+dt;
