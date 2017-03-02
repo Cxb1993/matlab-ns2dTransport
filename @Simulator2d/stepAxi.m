@@ -48,9 +48,9 @@ Mclump=diag(sparse(sum(s.Mc,2)));
 % no pressure correction
 %va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv];
 % pressure correction - Lagrangian
-va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps; 
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps; 
 
-vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
+%vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
@@ -59,9 +59,9 @@ vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*velc;
 % no pressure correction
 %va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]; 
 % pressure correction - Semi-Lagrangian
-%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
+va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
 
-%vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*cp;
+vc=((1/dt)*Mclump-(1-alpha)*kc*s.Kc)*cp;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % metodo acoplado                                               %
